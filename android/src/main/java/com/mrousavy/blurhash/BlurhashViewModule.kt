@@ -11,16 +11,17 @@ import com.facebook.imagepipeline.datasource.BaseBitmapDataSubscriber
 import com.facebook.imagepipeline.image.CloseableImage
 import com.facebook.imagepipeline.request.ImageRequestBuilder
 import com.facebook.react.bridge.*
+import com.facebook.react.module.annotations.ReactModule;
 import kotlin.concurrent.thread
 
-
+@ReactModule(name = BlurhashViewModule.NAME)
 class BlurhashViewModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext), LifecycleEventListener {
     companion object {
-        const val REACT_CLASS = "BlurhashView"
+        const val NAME = "BlurhashView"
     }
 
     override fun getName(): String {
-        return REACT_CLASS
+        return NAME
     }
 
     @ReactMethod
@@ -61,15 +62,15 @@ class BlurhashViewModule(reactContext: ReactApplicationContext) : ReactContextBa
                         }
                     }
 
-                    override fun onFailureImpl(dataSource: DataSource<CloseableReference<CloseableImage>>?) {
+                    override fun onFailureImpl(dataSource: DataSource<CloseableReference<CloseableImage>>) {
                         try {
-                            if (dataSource?.failureCause != null) {
+                            if (dataSource.failureCause != null) {
                                 promise.reject("LOAD_ERROR", dataSource.failureCause)
                             } else {
                                 promise.reject("LOAD_ERROR", Exception("Failed to load URI!"))
                             }
                         } finally {
-                            dataSource?.close()
+                            dataSource.close()
                         }
                     }
                 }, CallerThreadExecutor.getInstance())
